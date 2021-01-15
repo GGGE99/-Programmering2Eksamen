@@ -1,0 +1,7 @@
+**/target/
+**/nb-configuration.xml
+
+/nbproject/
+
+settings.js
+SetupTestUsers.java
