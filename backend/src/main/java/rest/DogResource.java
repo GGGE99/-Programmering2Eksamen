@@ -63,17 +63,23 @@ public class DogResource {
 //    public String getInfoForAll() {
 //        return "{\"msg\":\"Hello anonymous\"}";
 //    }
-
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("user")
     public String addDog(String req) throws IOException, InterruptedException, ExecutionException, TimeoutException, DatabaseException, ParseException {
         String thisuser = securityContext.getUserPrincipal().getName();
         User user = userFacade.findUser(thisuser);
-        DogDTO dog = GSON.fromJson(req, DogDTO.class);
-        String date = JsonParser.parseString(req).getAsJsonObject().get("dateOfBirth").toString();
-        Date newDate = dateFacade.getDate(date.substring(1, date.length() - 1));
-        dog.setDateOfBirth(newDate);
+        DogDTO dog = null;
+        Date newDate = null;
+        try {
+            dog = GSON.fromJson(req, DogDTO.class);
+            String date = JsonParser.parseString(req).getAsJsonObject().get("dateOfBirth").toString();
+            newDate = dateFacade.getDate(date.substring(1, date.length() - 1));
+            dog.setDateOfBirth(newDate);
+        } catch (Exception ex) {
+
+        }
+
         return GSON.toJson(dogFacade.addDog(user, dog));
     }
 
@@ -83,7 +89,7 @@ public class DogResource {
     public String getAllDogsFromUSer(String req) throws IOException, InterruptedException, ExecutionException, TimeoutException, DatabaseException, ParseException {
         String thisuser = securityContext.getUserPrincipal().getName();
         User user = userFacade.findUser(thisuser);
-        
+
         DogsDTO dogsDTO = dogFacade.getAllDogsFromAUser(user);
         return GSON.toJson(dogsDTO);
     }

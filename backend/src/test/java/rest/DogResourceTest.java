@@ -205,6 +205,6 @@ public class DogResourceTest {
                 .when()
                 .get("/dog").then()
                 .statusCode(200)
-                .body("dogsDTO[0].name", Matchers.anyOf(is("Hans"), is("jens")));
+                .body("dogsDTO[0].name", Matchers.anyOf(is("Hans"), is("Jens")));
     }
 }
