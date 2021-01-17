@@ -8,9 +8,12 @@ package rest;
 import DTOs.DogDTO;
 import DTOs.DogsDTO;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import entities.User;
 import errorhandling.DatabaseException;
+import errorhandling.DateException;
+import errorhandling.InvalidInputException;
 import facades.APIFacade;
 import facades.DateFacade;
 import facades.DogFacade;
@@ -27,9 +30,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -65,8 +72,41 @@ public class DogResource {
 //    }
     @POST
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed("user")
-    public String addDog(String req) throws IOException, InterruptedException, ExecutionException, TimeoutException, DatabaseException, ParseException {
+    public String addDog(String req) throws IOException, InterruptedException, ExecutionException, TimeoutException, DatabaseException, ParseException, InvalidInputException, DateException {
+        String thisuser = securityContext.getUserPrincipal().getName();
+        User user = userFacade.findUser(thisuser);
+        String name = GSON.fromJson(req, JsonObject.class).get("name").getAsString();
+        String breed = GSON.fromJson(req, JsonObject.class).get("breed").getAsString();
+        String date = JsonParser.parseString(req).getAsJsonObject().get("DateOfBirth").toString();
+        Date newDate = dateFacade.getDate(date.substring(1, date.length() - 1));
+        
+        
+        DogDTO dog = dogFacade.addDog(user, name, breed, newDate);
+
+        if (dog.testValidValues()) {
+            return GSON.toJson(dog);
+        }
+        return GSON.toJson(dog);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("user")
+    public String getAllDogsFromUSer(String req) throws IOException, InterruptedException, ExecutionException, TimeoutException, DatabaseException, ParseException {
+        String thisuser = securityContext.getUserPrincipal().getName();
+        User user = userFacade.findUser(thisuser);
+
+        DogsDTO dogsDTO = dogFacade.getAllDogsFromAUser(user);
+        return GSON.toJson(dogsDTO);
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("user")
+    public String updateDog(String req) throws IOException, InterruptedException, ExecutionException, TimeoutException, DatabaseException, ParseException, InvalidInputException, DateException {
         String thisuser = securityContext.getUserPrincipal().getName();
         User user = userFacade.findUser(thisuser);
         DogDTO dog = null;
@@ -79,18 +119,23 @@ public class DogResource {
         } catch (Exception ex) {
 
         }
-
-        return GSON.toJson(dogFacade.addDog(user, dog));
+        if (dog.testValidValues()) {
+            return GSON.toJson(dogFacade.updateDog(user, dog));
+        }
+        return GSON.toJson(dog);
     }
 
-    @GET
+    @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("user")
-    public String getAllDogsFromUSer(String req) throws IOException, InterruptedException, ExecutionException, TimeoutException, DatabaseException, ParseException {
+    @Path("{id}")
+    public String deleteDog(@PathParam("id") String id) throws IOException, InterruptedException, ExecutionException, TimeoutException, DatabaseException, ParseException, InvalidInputException, DateException {
         String thisuser = securityContext.getUserPrincipal().getName();
         User user = userFacade.findUser(thisuser);
+        DogDTO dog = dogFacade.deleteDog(user, id);
+       
 
-        DogsDTO dogsDTO = dogFacade.getAllDogsFromAUser(user);
-        return GSON.toJson(dogsDTO);
+        return GSON.toJson(dog);
     }
 }

@@ -174,7 +174,7 @@ public class DogResourceTest {
     public void testAddDog() {
         JSONObject req = new JSONObject();
         req.put("name", "Hansi");
-        req.put("dateOfBirth", "11-12-2021 00:00:00");
+        req.put("DateOfBirth", "11-12-2019 00:00:00");
         req.put("breed", "bulldog");
 
         login("user", "test");
@@ -188,8 +188,7 @@ public class DogResourceTest {
                 .post("/dog").then()
                 .statusCode(200)
                 .body("name", equalTo("Hansi"))
-                .body("DateOfBirth", equalTo("Dec 11, 2021, 12:00:00 AM"))
-                .body("info", equalTo("Det ved jeg ikke helt"))
+                .body("DateOfBirth", equalTo("Dec 11, 2019, 12:00:00 AM"))
                 .body("breed", equalTo("bulldog"));
     }
 

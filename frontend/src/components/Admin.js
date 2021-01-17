@@ -5,7 +5,7 @@ import breedFacade from "../facades/BreedFacade";
 import SelectSearch from "react-select-search";
 import "./Style.css";
 
-export default function Admin({ setError }) {
+export default function Admin({ setError, error }) {
     const init = {count: "", breed: ""}
 
   const [totalSearches, setTotalSearches] = useState("");
@@ -13,6 +13,7 @@ export default function Admin({ setError }) {
   const [breeds, setBreeds] = useState([]);
 
   useEffect(() => {
+    setError("")
     facade.fetchTotalSearches((data) => setTotalSearches(data), setError);
     breedFacade.fetchAllBreeds((data) => setBreeds([...data.dogs]), setError);
   }, []);
@@ -24,6 +25,7 @@ export default function Admin({ setError }) {
   }
   return (
     <div className="text-center w-100">
+      <h1>{error}</h1>
       <h1>Total searches: {totalSearches}</h1>
       {totalSearchesBreed.breed &&  <h1>Searches for {totalSearchesBreed.breed}: {totalSearchesBreed.count}</h1>}
      

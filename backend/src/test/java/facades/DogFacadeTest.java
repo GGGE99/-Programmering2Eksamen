@@ -128,12 +128,11 @@ public class DogFacadeTest {
     public void testAddDog() throws AuthenticationException, ParseException {
         EntityManager em = emf.createEntityManager();
         User u = em.find(User.class, "user");
-        Dog dog = new Dog("Jens", dateFacade.getDate("10-04-2015 00:00:00"));
-        dog.addBreed(breed);
-        DogDTO actual = new DogDTO(dog);
-        DogDTO expected = facade.addDog(u, actual);
-        System.out.println(expected.getName());
-        assertThat(actual, samePropertyValuesAs(expected));
+
+        String expected = "Jens";
+        DogDTO actual = facade.addDog(u, "Jens", "bulldog" ,dateFacade.getDate("10-04-2015 00:00:00"));
+
+        assertEquals(actual.getName(), expected);
     }
 
     @Test

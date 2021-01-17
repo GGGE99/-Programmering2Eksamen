@@ -14,9 +14,15 @@ function userFacade() {
     return fetcher(URL , options, action, setError);
   };
 
+  const fetchUpdateDog = (action, body, setError) => {
+    const options = makeOptions("PUT", true, body);
+    return fetcher(URL , options, action, setError);
+  };
+
   return {
     fetchAddDog,
-    fetchAllOfAUSersDog
+    fetchAllOfAUSersDog,
+    fetchUpdateDog,
   };
 }
 

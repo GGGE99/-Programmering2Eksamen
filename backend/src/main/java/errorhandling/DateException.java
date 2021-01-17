@@ -9,6 +9,9 @@ package errorhandling;
  *
  * @author marcg
  */
-public class DateException {
-    
+public class DateException extends Exception {
+
+    public DateException(String message) {
+        super(message);
+    }
 }

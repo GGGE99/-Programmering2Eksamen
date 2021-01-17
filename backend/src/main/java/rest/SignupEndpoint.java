@@ -45,6 +45,11 @@ public class SignupEndpoint {
         roles.add("user");
         UserDTO userDTO = GSON.fromJson(user, UserDTO.class);
         userDTO = new UserDTO(userDTO.getName(), userDTO.getPassword(), roles);
+        if(userDTO.getName().length() < 2 || userDTO.getName().length() > 25){
+            throw new InvalidInputException("A username should be between 2 and 25 charactors ("+ userDTO.getName() +" is "+ userDTO.getName().length() +")");
+        } else if(userDTO.getPassword().length() < 4){
+            throw new InvalidInputException("Password should be over 4 charactors");
+        }
         userDTO = FACADE.addUser(userDTO);
 
         String token = TokenUtils.createToken(userDTO.getName(), userDTO.getRoles());

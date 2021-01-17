@@ -37,25 +37,30 @@ public class Breed implements Serializable {
     @NotNull
     @Column(name = "breed", length = 50)
     private String breed;
-    
+
     @Lob
-    @Column(name = "info", length = 50000 )
+    @Column(name = "info", length = 50000)
     private String info;
-    
+
     @ManyToMany(mappedBy = "breeds")
     private List<Searches> searches = new ArrayList();
 
     @OneToMany(mappedBy = "breed", cascade = CascadeType.PERSIST)
     private List<Dog> dog;
-    
+
     public Breed() {
     }
-    
-    public void addDog(Dog dog){
+
+    public void addDog(Dog dog) {
         this.dog.add(dog);
         dog.addBreed(this);
     }
-    
+
+    public void removeDog(Dog dog) {
+        this.dog.remove(dog);
+        dog.removeBreed();
+    }
+
     public String getBreed() {
         return breed;
     }
@@ -68,8 +73,8 @@ public class Breed implements Serializable {
         this.breed = breed;
         this.info = info;
     }
-    
-    public void addSearch(Searches searches){
+
+    public void addSearch(Searches searches) {
         this.searches.add(searches);
     }
 
@@ -77,7 +82,5 @@ public class Breed implements Serializable {
     public String toString() {
         return "Breed{" + "breed=" + breed + ", info=" + info + '}';
     }
-    
-    
-    
+
 }

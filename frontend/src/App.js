@@ -24,17 +24,17 @@ function App() {
       <Navbar user={user} logout={logout} />
       <Switch>
         <Route path="/" exact>
-          <Home setError={setError}/>
+          <Home setError={setError} error={error}/>
         </Route>
         <Route path="/jokes">
           <Jokes setError={setError} />
         </Route>
 
         <Route path="/dogs">
-          <Dogs setError={setError}/>
+          <Dogs setError={setError} error={error}/>
         </Route>
         <Route path="/admin">
-          <Admin setError={setError}/>
+          <Admin setError={setError} error={error}/>
         </Route>
 
         <Route path="/signin">

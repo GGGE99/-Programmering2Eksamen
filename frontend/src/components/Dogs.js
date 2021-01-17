@@ -5,11 +5,12 @@ import SelectSearch from "react-select-search";
 import breedFacade from "../facades/BreedFacade";
 import "./Style.css";
 
-export default function Dogs({ setError }) {
-  const init = { name: "", dateOfBirth: "",  breed: "" };
+export default function Dogs({ setError, error }) {
+  const init = { name: "", DateOfBirth: "", breed: "" };
   const [dog, setDog] = useState({ ...init });
   const [dogs, setDogs] = useState([]);
   const [breeds, setBreeds] = useState([]);
+  const [edit, setEdit] = useState(false);
 
   const getUsersDogs = () => {
     facade.fetchAllOfAUSersDog((data) => {
@@ -35,17 +36,22 @@ export default function Dogs({ setError }) {
     });
   };
 
+  const submitUpdate = () => {
+    facade.fetchUpdateDog((data) => {setEdit(false);}, dog, setError);
+  };
+
+  const click = (d) => {
+    setDog({ ...d });
+    setEdit(true);
+  };
+
   const onSubmit = () => {
-    if (
-      dog.name !== "" &&
-      dog.dateOfBirth !== "" &&
-      dog.breed !== ""
-    ) {
+    if (dog.name !== "" && dog.DateOfBirth !== "" && dog.breed !== "") {
       let tempDog = { ...dog };
-      let date = dog.dateOfBirth.split("-").reverse().join("-");
+      let date = dog.DateOfBirth.split("-").reverse().join("-");
       tempDog = {
         ...tempDog,
-        ["dateOfBirth"]: date + " 12:00:00",
+        ["DateOfBirth"]: date + " 12:00:00",
       };
       console.log(tempDog);
       facade.fetchAddDog(
@@ -72,10 +78,15 @@ export default function Dogs({ setError }) {
             }}
           >
             <Form.Label className="float-left">Name</Form.Label>
-            <Form.Control id="name" type="name" placeholder="Enter name" />
+            <Form.Control
+              id="name"
+              type="name"
+              value={dog.name}
+              placeholder="Enter name"
+            />
 
             <Form.Label className="float-left">Birthday</Form.Label>
-            <Form.Control id="dateOfBirth" type="date" />
+            <Form.Control id="DateOfBirth" type="date" />
 
             <div className="mt-4">
               <SelectSearch
@@ -86,12 +97,20 @@ export default function Dogs({ setError }) {
                 name="language"
                 placeholder="Choose a breed"
                 onChange={onChangeBreed}
+                value={dog.breed}
               />
-</div>
-            <button className="btn btn-primary m-2" onClick={onSubmit}>
-              Add Dog
-            </button>
+            </div>
+            {edit ? (
+              <button className="btn btn-primary m-2" onClick={submitUpdate}>
+                edit
+              </button>
+            ) : (
+              <button className="btn btn-primary m-2" onClick={onSubmit}>
+                Add Dog
+              </button>
+            )}
           </Form.Group>
+          <p>{error}</p>
         </Jumbotron>
       </Col>
       <Col xs="4">
@@ -107,7 +126,7 @@ export default function Dogs({ setError }) {
           <tbody>
             {dogs.map((d) => {
               return (
-                <tr>
+                <tr onClick={() => click(d)}>
                   <td>{d.name}</td>
                   <td>{d.DateOfBirth}</td>
                   <td>{d.info}</td>

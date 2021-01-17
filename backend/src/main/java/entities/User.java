@@ -33,12 +33,10 @@ public class User implements Serializable {
     @NotNull
     @Column(name = "user_name", length = 25)
     private String userName;
-    
+
     @OneToMany(mappedBy = "user")
     private List<Dog> dogs = new ArrayList();
-    
-    
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -82,10 +80,14 @@ public class User implements Serializable {
         newCount();
     }
 
-    public void addDog(Dog dog){
+    public void addDog(Dog dog) {
         dogs.add(dog);
     }
-    
+
+    public void removeDog(Dog dog) {
+        dogs.remove(dog);
+    }
+
     public void newCount() {
         this.count = AES.encrypt(UUID.randomUUID().toString() + "." + dateFacade.makeDate(0, 0, 30, 0, 0, 0), env.aseDatabae);
     }

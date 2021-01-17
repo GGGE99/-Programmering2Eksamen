@@ -99,7 +99,6 @@ public class UserFacade {
 
     public User findUser(String username) throws DatabaseException {
         EntityManager em = emf.createEntityManager();
-        System.out.println(username);
         try {
             User user = null;
             user = em.find(User.class, username);
