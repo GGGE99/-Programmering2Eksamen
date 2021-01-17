@@ -25,7 +25,6 @@ public class SingleValue implements Processes {
             return facts;
         } else {
             JsonElement res = GSON.fromJson(facts, JsonObject.class).get(identifier);
-            System.out.println(res + " : " + identifier);
             return res.toString();
         }
     }

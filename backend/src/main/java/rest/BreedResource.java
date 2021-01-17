@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 import facades.APIFacade;
 import facades.DateFacade;
 import facades.DogFacade;
+import facades.SearchFacade;
 import facades.UserFacade;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class BreedResource {
     private static ExecutorService es = Executors.newCachedThreadPool();
     private static Gson GSON = new Gson();
     private static APIFacade api = APIFacade.getUserFacade(es);
+    private static SearchFacade searchFacade = SearchFacade.getSearchFacade(EMF);
 
     @Context
     private UriInfo context;
@@ -74,6 +76,8 @@ public class BreedResource {
                 json.add(entry1.getKey(), entry1.getValue());
             }
         }
+        
+        searchFacade.addSearch(breed);
         return json.toString();
     }
 

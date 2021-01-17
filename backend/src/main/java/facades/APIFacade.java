@@ -8,6 +8,7 @@ package facades;
 import DataProcesses.Breed;
 import DataProcesses.Processes;
 import DataProcesses.SingleValue;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import javax.persistence.EntityManagerFactory;
 import rest.JokeResource;
 import utils.Env;
 import utils.FetchFinder;
+import utils.HttpUtils;
 
 /**
  *
@@ -66,6 +68,12 @@ public class APIFacade {
         return results;
     }
 
+    public String getRawDataSingleURL(String URL) throws InterruptedException, ExecutionException, TimeoutException, IOException {
+        String ressult = HttpUtils.fetchData(URL);
+
+        return ressult;
+    }
+
     public Map<String, String> getProcessedData(HashMap<String, ArrayList<String>> URLS) throws InterruptedException, ExecutionException, TimeoutException {
         Map<String, String> data = new HashMap();
         for (Map.Entry<String, ArrayList<String>> entry : URLS.entrySet()) {
@@ -77,11 +85,8 @@ public class APIFacade {
             String identifier = URLS.get(entry.getKey()).get(0);
             String methode = URLS.get(entry.getKey()).get(1);
 
-//            if (identifier != null) {
-                results.put(entry.getKey(), processes.get(methode).process(entry.getValue(), identifier));
-//            } else {
-//                results.put(entry.getKey(), entry.getValue() + " : " + entry.getKey());
-//            }
+            results.put(entry.getKey(), processes.get(methode).process(entry.getValue(), identifier));
+
         }
 
         return results;

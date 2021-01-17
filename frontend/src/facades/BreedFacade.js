@@ -9,13 +9,14 @@ function userFacade() {
     return fetcher(URL , options, action, setError);
   };
 
-//   const fetchAllOfAUSersDog = (action, setError) => {
-//     const options = makeOptions("GET", true);
-//     return fetcher(URL , options, action, setError);
-//   };
+  const fetchBreed = (action, breed, setError) => {
+    const options = makeOptions("GET", true);
+    return fetcher(URL + breed , options, action, setError);
+  };
 
   return {
     fetchAllBreeds,
+    fetchBreed,
   };
 }
 
