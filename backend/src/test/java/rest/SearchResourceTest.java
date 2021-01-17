@@ -5,8 +5,6 @@
  */
 package rest;
 
-import DTOs.DogDTO;
-import DTOs.DogsDTO;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import entities.Breed;
 import entities.Dog;
@@ -18,9 +16,7 @@ import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
@@ -30,11 +26,10 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.hamcrest.Matchers;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
 
@@ -42,7 +37,7 @@ import utils.EMF_Creator;
  *
  * @author marcg
  */
-public class DogResourceTest {
+public class SearchResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
@@ -50,7 +45,6 @@ public class DogResourceTest {
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
-    private static DogFacade facade;
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -62,7 +56,6 @@ public class DogResourceTest {
         //This method must be called before you request the EntityManagerFactory
         EMF_Creator.startREST_TestWithDB();
         emf = EMF_Creator.createEntityManagerFactoryForTest();
-        facade = DogFacade.getDogFacade(emf);
 
         httpServer = startServer();
         //Setup RestAssured
@@ -171,40 +164,64 @@ public class DogResourceTest {
     }
 
     @Test
-    public void testAddDog() {
-        JSONObject req = new JSONObject();
-        req.put("name", "Hansi");
-        req.put("dateOfBirth", "11-12-2021 00:00:00");
-        req.put("breed", "bulldog");
+    public void testCountSearches() throws InterruptedException {
+        login("admin", "test");
+        String start = given()
+                .contentType("application/json")
+                .accept(ContentType.JSON)
+                .header("x-access-token", securityToken)
+                .when()
+                .get("/admin/count").then()
+                .extract().response().asString();
+        int s = Integer.parseInt(start);
 
-        login("user", "test");
-        System.out.println(securityToken);
         given()
                 .contentType("application/json")
                 .accept(ContentType.JSON)
                 .header("x-access-token", securityToken)
-                .body(req.toJSONString())
                 .when()
-                .post("/dog").then()
+                .get("/dog-breed/bulldog").then()
                 .statusCode(200)
-                .body("name", equalTo("Hansi"))
-                .body("DateOfBirth", equalTo("Dec 11, 2021, 12:00:00 AM"))
-                .body("info", equalTo("Det ved jeg ikke helt"))
-                .body("breed", equalTo("bulldog"));
+                .body(Matchers.notNullValue());
+        given()
+                .contentType("application/json")
+                .accept(ContentType.JSON)
+                .header("x-access-token", securityToken)
+                .when()
+                .get("/admin/count").then()
+                .statusCode(200)
+                .body(Matchers.anyOf(is("" + s), is("" + (s + 1))));
     }
 
     @Test
-    public void testGetAllDogsFromAUser() {
+    public void testCountSearchesForBreed() throws InterruptedException {
+        login("admin", "test");
+        String start = given()
+                .contentType("application/json")
+                .accept(ContentType.JSON)
+                .header("x-access-token", securityToken)
+                .when()
+                .get("/admin/count").then()
+                .extract().response().asString();
+        
+        int s = Integer.parseInt(start);
 
-        login("user", "test");
-        System.out.println(securityToken);
         given()
                 .contentType("application/json")
                 .accept(ContentType.JSON)
                 .header("x-access-token", securityToken)
                 .when()
-                .get("/dog").then()
+                .get("/dog-breed/bulldog").then()
                 .statusCode(200)
-                .body("dogsDTO[0].name", Matchers.anyOf(is("Hans"), is("jens")));
+                .body(Matchers.notNullValue());
+        given()
+                .contentType("application/json")
+                .accept(ContentType.JSON)
+                .header("x-access-token", securityToken)
+                .when()
+                .get("/admin/count").then()
+                .statusCode(200)
+                .body(Matchers.anyOf(is("" + s), is("" + (s + 1))));
     }
+
 }

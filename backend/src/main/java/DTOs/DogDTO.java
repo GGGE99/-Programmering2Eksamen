@@ -22,8 +22,8 @@ public class DogDTO {
     public DogDTO(Dog dog) {
         this.name = dog.getName();
         this.DateOfBirth = dog.getDateOfBirth();
-        this.info = dog.getInfo();
-        this.breed = dog.getBreed();
+        this.breed = dog.getBreed().getBreed();
+        this.info = dog.getBreed().getInfo();
     }
 
     public String getName() {

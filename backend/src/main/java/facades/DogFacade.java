@@ -7,6 +7,7 @@ package facades;
 
 import DTOs.DogDTO;
 import DTOs.DogsDTO;
+import entities.Breed;
 import entities.Dog;
 import entities.User;
 import java.util.List;
@@ -36,9 +37,11 @@ public class DogFacade {
 
     public DogDTO addDog(User user, DogDTO dogDTO) {
         EntityManager em = emf.createEntityManager();
-        Dog dog = new Dog(dogDTO.getName(), dogDTO.getDateOfBirth(), dogDTO.getInfo(), dogDTO.getBreed());
+        Breed b = em.find(Breed.class, dogDTO.getBreed());
+        Dog dog = new Dog(dogDTO.getName(), dogDTO.getDateOfBirth());
         em.getTransaction().begin();
-        user.addDog(dog);
+        dog.addUser(user);
+        dog.addBreed(b);
         em.persist(dog);
         em.getTransaction().commit();
 

@@ -35,7 +35,7 @@ public class User implements Serializable {
     private String userName;
     
     @OneToMany(mappedBy = "user")
-    private List<Dog> dogs;
+    private List<Dog> dogs = new ArrayList();
     
     
     
@@ -84,7 +84,6 @@ public class User implements Serializable {
 
     public void addDog(Dog dog){
         dogs.add(dog);
-        dog.addUser(this);
     }
     
     public void newCount() {

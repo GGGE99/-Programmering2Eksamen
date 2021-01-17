@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Jumbotron, Row, Col, Form, Table } from "react-bootstrap";
 import facade from "../facades/Dogfacade";
+import SelectSearch from "react-select-search";
+import breedFacade from "../facades/BreedFacade";
+import "./Style.css";
 
 export default function Dogs({ setError }) {
-  const init = { name: "", dateOfBirth: "", info: "", breed: "" };
+  const init = { name: "", dateOfBirth: "",  breed: "" };
   const [dog, setDog] = useState({ ...init });
   const [dogs, setDogs] = useState([]);
+  const [breeds, setBreeds] = useState([]);
 
   const getUsersDogs = () => {
     facade.fetchAllOfAUSersDog((data) => {
@@ -15,6 +19,7 @@ export default function Dogs({ setError }) {
 
   useEffect(() => {
     getUsersDogs();
+    breedFacade.fetchAllBreeds((data) => setBreeds([...data.dogs]), setError);
   }, []);
 
   const onChange = (evt) => {
@@ -23,12 +28,17 @@ export default function Dogs({ setError }) {
       [evt.target.id]: evt.target.value,
     });
   };
+  const onChangeBreed = (evt) => {
+    setDog({
+      ...dog,
+      ["breed"]: evt,
+    });
+  };
 
   const onSubmit = () => {
     if (
       dog.name !== "" &&
       dog.dateOfBirth !== "" &&
-      dog.info !== "" &&
       dog.breed !== ""
     ) {
       let tempDog = { ...dog };
@@ -67,12 +77,17 @@ export default function Dogs({ setError }) {
             <Form.Label className="float-left">Birthday</Form.Label>
             <Form.Control id="dateOfBirth" type="date" />
 
-            <Form.Label className="float-left">Info</Form.Label>
-            <Form.Control id="info" type="name" placeholder="Enter Info" />
-
-            <Form.Label className="float-left">Breed</Form.Label>
-            <Form.Control id="breed" type="text" placeholder="Enter Breed" />
-
+            <div className="mt-4">
+              <SelectSearch
+                options={breeds.map((breed) => {
+                  return { name: breed.breed, value: breed.breed };
+                })}
+                search
+                name="language"
+                placeholder="Choose a breed"
+                onChange={onChangeBreed}
+              />
+</div>
             <button className="btn btn-primary m-2" onClick={onSubmit}>
               Add Dog
             </button>

@@ -37,10 +37,10 @@
  */
 .select-search__input {
     display: block;
-    height: 60px;
+    height: 36px;
     width: 100%;
     padding: 0 16px;
-    background: rgb(190, 190, 190);
+    background: rgb(255, 255, 255);
     border: 1px solid transparent;
     box-shadow: 0 .0625rem .125rem rgba(0, 0, 0, 0.15);
     border-radius: 3px;

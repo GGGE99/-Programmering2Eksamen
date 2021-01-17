@@ -9,6 +9,7 @@ import DTOs.DogDTO;
 import DTOs.DogsDTO;
 import DTOs.UserDTO;
 import DTOs.UsersDTO;
+import entities.Breed;
 import entities.Dog;
 import entities.Role;
 import entities.User;
@@ -43,9 +44,10 @@ public class DogFacadeTest {
     private static DogFacade facade;
     public static final DateFacade dateFacade = DateFacade.getDateFacade("dd-MM-yyyy HH:mm:ss");
 
-    private static String pass = "1234";
-    private static User user = new User("Test", pass);
-    private static User both = new User("user_admin", pass);
+//    private static String pass = "1234";
+//    private static User user = new User("Test", pass);
+//    private static User both = new User("user_admin", pass);
+    private static Breed breed = new Breed("bulldog", "Det ved jeg ikke helt");
 
 //    private static Role userRole = new Role("user");
 //    private static Role adminRole = new Role("admin");
@@ -71,25 +73,45 @@ public class DogFacadeTest {
     public void setUp() {
         EntityManager em = emf.createEntityManager();
         try {
-
+            User admin = new User("admin", "test");
+            User both = new User("user_admin", "test");
+            User user = new User("user", "test");
             em.getTransaction().begin();
             //Delete existing users and roles to get a "fresh" database
             em.createQuery("delete from Dog").executeUpdate();
+            em.createQuery("delete from Breed").executeUpdate();
             em.createQuery("delete from User").executeUpdate();
             em.createQuery("delete from Role").executeUpdate();
 
+            System.out.println(user.getUserName());
+            
             Role userRole = new Role("user");
             Role adminRole = new Role("admin");
-            User user = new User("user", "test");
-            user.addRole(userRole);
 
-            User admin = new User("admin", "test");
+            Breed breed = new Breed("bulldog", "Det ved jeg ikke helt");
+
+            Dog dog = new Dog("Hans", new Date());
+            Dog jens = new Dog("Jens", new Date());
+
+            dog.addBreed(breed);
+            jens.addBreed(breed);
+
+            dog.addUser(user);
+            jens.addUser(user);
+
+            user.addRole(userRole);
             admin.addRole(adminRole);
-            User both = new User("user_admin", "test");
             both.addRole(userRole);
             both.addRole(adminRole);
+            
+            em.persist(breed);
+            
+            em.persist(dog);
+            em.persist(jens);
+
             em.persist(userRole);
             em.persist(adminRole);
+            
             em.persist(user);
             em.persist(admin);
             em.persist(both);
@@ -97,40 +119,6 @@ public class DogFacadeTest {
             //System.out.println("Saved test data to database");
             em.getTransaction().commit();
 
-//            em.getTransaction().begin();
-//            em.createQuery("delete from Dog d").executeUpdate();
-//            em.createQuery("delete from User u").executeUpdate();
-//            em.createQuery("delete from Role r").executeUpdate();
-//
-//            Role userRole = new Role("user");
-//            Role adminRole = new Role("admin");
-//
-//            user.addRole(userRole);
-//
-//            both.addRole(userRole);
-//            both.addRole(adminRole);
-//
-//            em.persist(userRole);
-//            em.persist(adminRole);
-//            em.persist(both);
-//            em.persist(user);
-//
-//            //System.out.println("Saved test data to database");
-//            em.getTransaction().commit();
-//            em.getTransaction().begin();
-//            Dog dog = new Dog("Hans", new Date(), "Det ved jeg ikke helt", "bulldog");
-//            Dog jens = new Dog("Jens", new Date(), "Det ved jeg ikke helt", "bulldog");
-//            System.out.println(dog.getDateOfBirth());
-//
-//            User u = em.find(User.class, "Test");
-//            System.out.println(u.getUserName());
-//            u.addDog(dog);
-//            u.addDog(jens);
-//
-//            em.persist(dog);
-//            em.persist(jens);
-//
-//            em.getTransaction().commit();
         } finally {
             em.close();
         }
@@ -140,7 +128,8 @@ public class DogFacadeTest {
     public void testAddDog() throws AuthenticationException, ParseException {
         EntityManager em = emf.createEntityManager();
         User u = em.find(User.class, "user");
-        Dog dog = new Dog("Jens", dateFacade.getDate("10-04-2015 00:00:00"), "Det ved jeg ikke helt", "bulldog");
+        Dog dog = new Dog("Jens", dateFacade.getDate("10-04-2015 00:00:00"));
+        dog.addBreed(breed);
         DogDTO actual = new DogDTO(dog);
         DogDTO expected = facade.addDog(u, actual);
         System.out.println(expected.getName());
@@ -151,12 +140,9 @@ public class DogFacadeTest {
     public void testGetAllUsers() throws AuthenticationException, ParseException {
         EntityManager em = emf.createEntityManager();
         User u = em.find(User.class, "user");
-        
-        Dog dog = new Dog("Hans", new Date(), "Det ved jeg ikke helt", "bulldog");
-        Dog jens = new Dog("Jens", new Date(), "Det ved jeg ikke helt", "bulldog");
-        facade.addDog(u, new DogDTO(dog));
-        facade.addDog(u, new DogDTO(jens));
-        
+
+//        facade.addDog(u, new DogDTO(dog));
+//        facade.addDog(u, new DogDTO(jens));
         DogsDTO list = facade.getAllDogsFromAUser(u);
         int actual = list.getUsersDTO().size();
         int expected = 2;

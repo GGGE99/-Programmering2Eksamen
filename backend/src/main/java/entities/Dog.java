@@ -14,6 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,21 +39,18 @@ public class Dog implements Serializable {
 
     @Column(name = "name", length = 50, nullable = false)
     private String name;
-    
+
     @Temporal(TemporalType.DATE)
     @Column(name = "birth_day", nullable = false)
     private Date DateOfBirth;
 
-    @Column(name = "info", nullable = true)
-    private String info;
+    @ManyToOne
+    @JoinColumn(name = "breed")
+    private Breed breed;
 
-    @Column(name = "breed", length = 50, nullable = false)
-    private String breed;
-
-    public Dog(String name, Date DateOfBirth, String info, String breed) {
+    public Dog(String name, Date DateOfBirth) {
         this.name = name;
         this.DateOfBirth = DateOfBirth;
-        this.info = info;
         this.breed = breed;
     }
 
@@ -64,6 +63,10 @@ public class Dog implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public void addBreed(Breed breed){
+        this.breed = breed;
     }
 
     public User getUser() {
@@ -78,16 +81,13 @@ public class Dog implements Serializable {
         return DateOfBirth;
     }
 
-    public String getInfo() {
-        return info;
-    }
-
-    public String getBreed() {
+    public Breed getBreed() {
         return breed;
     }
 
     public void addUser(User user) {
         this.user = user;
+        user.addDog(this);
     }
 
 }
