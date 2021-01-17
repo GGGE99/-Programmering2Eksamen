@@ -64,7 +64,7 @@ function Signup({ setUser, setError, error }) {
               type="Password"
               placeholder="Enter Password"
             />
-            <button className="btn btn-primary m-2" onClick={performLogin}>
+            <button type="" className="btn btn-primary m-2" onClick={performLogin}>
               Sign UP
             </button>
           </Form.Group>

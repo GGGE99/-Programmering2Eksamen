@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Container } from "react-bootstrap";
-import { Jokes, Signup, Login, Home, Users, Logout } from "./components";
+import { Jokes, Signup, Login, Home, Users, Logout, Dogs } from "./components";
 import { getUserByJwt } from "./utils/token";
 import { loginMethod, logoutMethode } from "./utils/loginUtils";
 
@@ -24,12 +24,16 @@ function App() {
       <Navbar user={user} logout={logout} />
       <Switch>
         <Route path="/" exact>
-          <Home />
+          <Home setError={setError}/>
         </Route>
         <Route path="/jokes">
-          <Jokes setError={setError}/>
+          <Jokes setError={setError} />
         </Route>
-        <Route path="/products" />
+
+        <Route path="/dogs">
+          <Dogs setError={setError}/>
+        </Route>
+
         <Route path="/signin">
           <Container className="con" fluid>
             <Login login={login} user={user} logout={logout} error={error} />
@@ -47,7 +51,7 @@ function App() {
         </Route>
         <Route path="/logout">
           <Container className="con" fluid>
-            <Logout logout={logout}/>
+            <Logout logout={logout} />
           </Container>
         </Route>
       </Switch>

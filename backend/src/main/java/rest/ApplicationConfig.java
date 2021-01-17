@@ -25,6 +25,8 @@ public class ApplicationConfig extends Application {
         resources.add(errorhandling.GenericExceptionMapper.class);
         resources.add(errorhandling.InvalidInputExceptionMapper.class);
         resources.add(org.glassfish.jersey.server.wadl.internal.WadlResource.class);
+        resources.add(rest.BreedResource.class);
+        resources.add(rest.DogResource.class);
         resources.add(rest.JokeResource.class);
         resources.add(rest.SignupEndpoint.class);
         resources.add(rest.UserResource.class);

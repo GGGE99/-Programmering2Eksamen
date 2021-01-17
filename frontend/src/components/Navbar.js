@@ -14,6 +14,10 @@ function NavbarShow({ user, logout }) {
           <Link to="/jokes" className="nav-link">
             Jokes
           </Link>
+
+          <Link to="/dogs" className="nav-link">
+            Dogs
+          </Link>
         </Nav>
         <Nav>
           {user.username !== "" ? (

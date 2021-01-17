@@ -1,28 +1,46 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package rest;
 
-import entities.User;
+import DTOs.DogDTO;
+import DTOs.DogsDTO;
+import com.nimbusds.jose.shaded.json.JSONObject;
+import entities.Dog;
 import entities.Role;
-
+import entities.User;
+import facades.DogFacade;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.hamcrest.Matchers;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.samePropertyValuesAs;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
 
-//Disabled
-public class LoginEndpointTest {
+/**
+ *
+ * @author marcg
+ */
+public class DogResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
@@ -30,6 +48,8 @@ public class LoginEndpointTest {
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
+    private static DogFacade facade;
+    
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -41,6 +61,7 @@ public class LoginEndpointTest {
         //This method must be called before you request the EntityManagerFactory
         EMF_Creator.startREST_TestWithDB();
         emf = EMF_Creator.createEntityManagerFactoryForTest();
+        facade = DogFacade.getDogFacade(emf);
 
         httpServer = startServer();
         //Setup RestAssured
@@ -51,9 +72,10 @@ public class LoginEndpointTest {
 
     @AfterAll
     public static void closeTestServer() {
+        //System.in.read();
+
         //Don't forget this, if you called its counterpart in @BeforeAll
         EMF_Creator.endREST_TestWithDB();
-
         httpServer.shutdownNow();
     }
 
@@ -92,6 +114,7 @@ public class LoginEndpointTest {
 
     //This is how we hold on to the token after login, similar to that a client must store the token somewhere
     private static String securityToken;
+    private static String count;
 
     //Utility method to login and set the returned securityToken
     private static void login(String role, String password) {
@@ -106,112 +129,66 @@ public class LoginEndpointTest {
         //System.out.println("TOKEN ---> " + securityToken);
     }
 
+    private static void getCount(String role, String password) {
+        String json = String.format("{username: \"%s\", password: \"%s\"}", role, password);
+        count = given()
+                .contentType("application/json")
+                .body(json)
+                //.when().post("/api/login")
+                .when().post("/login")
+                .then()
+                .extract().path("count");
+        //System.out.println("TOKEN ---> " + securityToken);
+    }
+
     private void logOut() {
         securityToken = null;
     }
 
     @Test
-    public void serverIsRunning() {
-        given().when().get("/user").then().statusCode(200);
+    public void testAddDog() {
+        JSONObject req = new JSONObject();
+        req.put("name", "Hansi");
+        req.put("dateOfBirth", "11-12-2021 00:00:00");
+        req.put("info", "hej");
+        req.put("breed", "bulldog");
+
+        login("user", "test");
+        System.out.println(securityToken);
+        given()
+                .contentType("application/json")
+                .accept(ContentType.JSON)
+                .header("x-access-token", securityToken)
+                .body(req.toJSONString())
+                .when()
+                .post("/dog").then()
+                .statusCode(200)
+                .body("name", equalTo("Hansi"))
+                .body("DateOfBirth", equalTo("Dec 11, 2021, 12:00:00 AM"))
+                .body("info", equalTo("hej"))
+                .body("breed", equalTo("bulldog"));
     }
 
     @Test
-    public void testRestNoAuthenticationRequired() {
+    public void testGetAllDogsFromAUser() {
+        EntityManager em = emf.createEntityManager();
+        User u = em.find(User.class, "user");
+        Dog dog = new Dog("Hans", new Date(), "Det ved jeg ikke helt", "bulldog");
+        Dog jens = new Dog("Jens", new Date(), "Det ved jeg ikke helt", "bulldog");
+        facade.addDog(u, new DogDTO(dog));
+        facade.addDog(u, new DogDTO(jens));
+        
+
+        login("user", "test");
+        System.out.println(securityToken);
         given()
                 .contentType("application/json")
+                .accept(ContentType.JSON)
+                .header("x-access-token", securityToken)
                 .when()
-                .get("/user/").then()
+                .get("/dog").then()
                 .statusCode(200)
-                .body("msg", equalTo("Hello anonymous"));
+                .body("dogsDTO[0].name", equalTo("Hans"))
+                .body("dogsDTO[1].name", equalTo("Jens"));
     }
-
-//    @Test
-//    public void testRestForAdmin() {
-//        login("admin", "test");
-//        given()
-//                .contentType("application/json")
-//                .accept(ContentType.JSON)
-//                .header("x-access-token", securityToken)
-//                .when()
-//                .get("/user/admin").then()
-//                .statusCode(200)
-//                .body("name", equalTo("admin"));
-//    }
-//    @Test
-//    public void testRestForUser() {
-//        login("user", "test");
-//        given()
-//                .contentType("application/json")
-//                .header("x-access-token", securityToken)
-//                .when()
-//                .get("/user/user").then()
-//                .statusCode(200)
-//                .body("name", equalTo("user"));
-//    }
-//    @Test
-//    public void testAutorizedUserCannotAccesAdminPage() {
-//        login("user", "test");
-//        given()
-//                .contentType("application/json")
-//                .header("x-access-token", securityToken)
-//                .when()
-//                .get("/user/admin").then() //Call Admin endpoint as user
-//                .statusCode(401);
-//    }
-//    @Test
-//    public void testAutorizedAdminCannotAccesUserPage() {
-//        login("admin", "test");
-//        given()
-//                .contentType("application/json")
-//                .header("x-access-token", securityToken)
-//                .when()
-//                .get("/user/user").then() //Call User endpoint as Admin
-//                .statusCode(401);
-//    }
-//    @Test
-//    public void testRestForMultiRole1() {
-//        login("user_admin", "test");
-//        given()
-//                .contentType("application/json")
-//                .accept(ContentType.JSON)
-//                .header("x-access-token", securityToken)
-//                .when()
-//                .get("/user/admin").then()
-//                .statusCode(200)
-//                .body("name", equalTo("user_admin"));
-//    }
-//
-//    @Test
-//    public void testRestForMultiRole2() {
-//        login("user_admin", "test");
-//        given()
-//                .contentType("application/json")
-//                .header("x-access-token", securityToken)
-//                .when()
-//                .get("/user/user").then()
-//                .statusCode(200)
-//                .body("name", equalTo("user_admin"));
-//    }
-//    @Test
-//    public void userNotAuthenticated() {
-//        logOut();
-//        given()
-//                .contentType("application/json")
-//                .when()
-//                .get("/user/user").then()
-//                .statusCode(403)
-//                .body("code", equalTo(403))
-//                .body("message", equalTo("Not authenticated - do login"));
-//    }
-//    @Test
-//    public void adminNotAuthenticated() {
-//        logOut();
-//        given()
-//                .contentType("application/json")
-//                .when()
-//                .get("/user/user").then()
-//                .statusCode(403)
-//                .body("code", equalTo(403))
-//                .body("message", equalTo("Not authenticated - do login"));
-//    }
 }

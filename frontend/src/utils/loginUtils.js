@@ -5,7 +5,6 @@ export const loginMethod = (user, pass, setUser, setError) => {
   facade
     .login(user, pass)
     .then((res) => {
-      console.log(res.count)
       setToken(res.token);
       setCount(res.count);
       setUser({ ...getUserByJwt() });

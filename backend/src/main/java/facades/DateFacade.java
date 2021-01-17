@@ -43,9 +43,13 @@ public class DateFacade {
 
         return sdf.format(currentDatePlusOne);
     }
-    
-    public Date getDate(String date) throws ParseException{
+
+    public Date getDate(String date) throws ParseException {
         return sdf.parse(date);
+    }
+
+    public String getDateAsString(Date date) throws ParseException {
+        return sdf.format(date);
     }
 
 }

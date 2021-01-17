@@ -60,7 +60,7 @@ export const fetcher = (URL, options, action, setError, actionIfError) => {
 
 const refreshJWT = () => {
   const options = makeOptions("POST", true, { count: getCount() });
-  return fetch(baseURL + "api/user/test", options).then(handleHttpErrors);
+  return fetch(baseURL + "api/user/refresh", options).then(handleHttpErrors);
 };
 
 const catcher = (err, setError) => {

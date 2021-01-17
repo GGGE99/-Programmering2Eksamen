@@ -29,7 +29,7 @@ import utils.TokenUtils;
 public class LoginEndpoint {
 
     private static Env env = Env.GetEnv();
-    public static final int TOKEN_EXPIRE_TIME = 1000 * 30 * 1; //30sec min
+    public static final int TOKEN_EXPIRE_TIME = 1000 * 60 * 15; //30sec min
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     public static final UserFacade USER_FACADE = UserFacade.getUserFacade(EMF);
     public static final DateFacade dateFacade = DateFacade.getDateFacade("dd-MM-yyyy HH:mm:ss");
@@ -45,6 +45,9 @@ public class LoginEndpoint {
         User user = null;
         try {
             user = USER_FACADE.getVeryfiedUser(username, password);
+            if(user.getCount() == null){
+                USER_FACADE.giveNewCountToUserDB(user);
+            }
 
             if (!USER_FACADE.isCountExpired(user.getCount())) {
                 USER_FACADE.giveNewCountToUserDB(user);

@@ -7,12 +7,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -31,6 +33,12 @@ public class User implements Serializable {
     @NotNull
     @Column(name = "user_name", length = 25)
     private String userName;
+    
+    @OneToMany(mappedBy = "user")
+    private List<Dog> dogs;
+    
+    
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -74,6 +82,11 @@ public class User implements Serializable {
         newCount();
     }
 
+    public void addDog(Dog dog){
+        dogs.add(dog);
+        dog.addUser(this);
+    }
+    
     public void newCount() {
         this.count = AES.encrypt(UUID.randomUUID().toString() + "." + dateFacade.makeDate(0, 0, 30, 0, 0, 0), env.aseDatabae);
     }

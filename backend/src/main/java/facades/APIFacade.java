@@ -5,6 +5,7 @@
  */
 package facades;
 
+import DataProcesses.Breed;
 import DataProcesses.Processes;
 import DataProcesses.SingleValue;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class APIFacade {
             es = _es;
             instance = new APIFacade();
             processes.put("jokes", new SingleValue());
+            processes.put("breed", new Breed());
         }
         return instance;
     }
@@ -67,17 +69,19 @@ public class APIFacade {
     public Map<String, String> getProcessedData(HashMap<String, ArrayList<String>> URLS) throws InterruptedException, ExecutionException, TimeoutException {
         Map<String, String> data = new HashMap();
         for (Map.Entry<String, ArrayList<String>> entry : URLS.entrySet()) {
-            data.put(entry.getKey(), entry.getValue().get(1));
+            data.put(entry.getKey(), entry.getValue().get(2));
         }
         Map<String, String> newData = getRawData((HashMap<String, String>) data);
         Map<String, String> results = new HashMap();
         for (Map.Entry<String, String> entry : newData.entrySet()) {
             String identifier = URLS.get(entry.getKey()).get(0);
-            if (identifier != null) {
-                results.put(entry.getKey(),processes.get("jokes").process(entry.getValue(), identifier) + " : " + entry.getKey());
-            } else {
-                results.put(entry.getKey(),entry.getValue() + " : " + entry.getKey());
-            }
+            String methode = URLS.get(entry.getKey()).get(1);
+
+//            if (identifier != null) {
+                results.put(entry.getKey(), processes.get(methode).process(entry.getValue(), identifier));
+//            } else {
+//                results.put(entry.getKey(), entry.getValue() + " : " + entry.getKey());
+//            }
         }
 
         return results;

@@ -23,7 +23,6 @@ export const setToken = (token) => {
 
 export function getUserByJwt() {
   if (getToken()) {
-  console.log(getToken())
     const tokenUser = parseJwt(getToken());
     const tempUser = {
       username: tokenUser.username,
@@ -39,6 +38,5 @@ export const getCount = () => {
 };
 
 export const setCount = (count) => {
-  console.log(count)
   localStorage.setItem("count", count);
 };

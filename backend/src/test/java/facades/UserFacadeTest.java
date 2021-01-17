@@ -54,6 +54,7 @@ public class UserFacadeTest {
         facade = UserFacade.getUserFacade(emf);
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
+        em.createQuery("delete from Dog").executeUpdate();
 
         em.createQuery("delete from User u").executeUpdate();
         em.createQuery("delete from Role r").executeUpdate();
