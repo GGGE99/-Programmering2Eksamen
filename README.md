@@ -1,6 +1,5 @@
 
-# API-QuickStart-project [![Build Status](https://travis-ci.com/MarcusJyl/API-QuickStart-project.svg?branch=main)](https://travis-ci.com/MarcusJyl/API-QuickStart-project)
-
+# API-QuickStart-project [![Build Status](https://travis-ci.com/GGGE99/Programmering2Eksamen.svg?branch=main)](https://travis-ci.com/GGGE99/Programmering2Eksamen)
 ## Backend setup
 for at opsætte start koden skal der gøres det samme som for den udleveret start koden som ses i dette link
 * [How to use](https://docs.google.com/document/d/1K6s6Tt65bzB8bCSE_NUE8alJrLRNTKCwax3GEm4OjOE/edit)
