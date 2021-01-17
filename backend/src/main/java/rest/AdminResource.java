@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -51,6 +52,7 @@ public class AdminResource {
     @GET
     @Path("/populate")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("admin")
     public String populateDB(@PathParam("breed") String breed) throws InterruptedException, ExecutionException, TimeoutException, IOException {
 
         return searchFacade.populateBreeds();
@@ -58,6 +60,7 @@ public class AdminResource {
 
     @GET
     @Path("/count")
+    @RolesAllowed("admin")
     @Produces(MediaType.APPLICATION_JSON)
     public String getCount() throws InterruptedException, ExecutionException, TimeoutException, IOException {
 
@@ -66,6 +69,7 @@ public class AdminResource {
 
     @GET
     @Path("/count/{breed}")
+    @RolesAllowed("admin")
     @Produces(MediaType.APPLICATION_JSON)
     public String getCountForBreed(@PathParam("breed") String breed) throws InterruptedException, ExecutionException, TimeoutException, IOException {
 

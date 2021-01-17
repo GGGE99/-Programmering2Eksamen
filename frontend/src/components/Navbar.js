@@ -15,12 +15,20 @@ function NavbarShow({ user, logout }) {
             Jokes
           </Link>
 
-          <Link to="/dogs" className="nav-link">
+          {user.roles.includes("admin") ? (
+            <Link to="/admin" className="nav-link">
+              Admin
+            </Link>
+          ) : (
+            <></>
+          )}
+          {user.roles.includes("user") ?(
+            <Link to="/dogs" className="nav-link">
             Dogs
           </Link>
-          <Link to="/admin" className="nav-link">
-            Admin
-          </Link>
+          ) : (
+            <></>
+          )}
         </Nav>
         <Nav>
           {user.username !== "" ? (
@@ -32,9 +40,7 @@ function NavbarShow({ user, logout }) {
               {user.roles.includes("admin") && (
                 <>
                   <Link to="/users">
-                    <button className="btn btn-primary ml-2">
-                      Users
-                    </button>
+                    <button className="btn btn-primary ml-2">Users</button>
                   </Link>
                 </>
               )}

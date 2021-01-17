@@ -7,10 +7,14 @@ export default function Dogs({ setError }) {
   const [dog, setDog] = useState({ ...init });
   const [dogs, setDogs] = useState([]);
 
-  useEffect(() => {
+  const getUsersDogs = () => {
     facade.fetchAllOfAUSersDog((data) => {
       setDogs([...data.dogsDTO]);
     }, setError);
+  };
+
+  useEffect(() => {
+    getUsersDogs();
   }, []);
 
   const onChange = (evt) => {
@@ -34,7 +38,13 @@ export default function Dogs({ setError }) {
         ["dateOfBirth"]: date + " 12:00:00",
       };
       console.log(tempDog);
-      facade.fetchAddDog((data) => {}, tempDog, setError);
+      facade.fetchAddDog(
+        (data) => {
+          getUsersDogs();
+        },
+        tempDog,
+        setError
+      );
     }
 
     //
@@ -48,7 +58,7 @@ export default function Dogs({ setError }) {
             controlId="formBasicEmail"
             onChange={onChange}
             onKeyPress={(evt) => {
-              if (evt.charCode === 13) console.log("hej");
+              if (evt.charCode === 13) onSubmit();
             }}
           >
             <Form.Label className="float-left">Name</Form.Label>
@@ -64,7 +74,7 @@ export default function Dogs({ setError }) {
             <Form.Control id="breed" type="text" placeholder="Enter Breed" />
 
             <button className="btn btn-primary m-2" onClick={onSubmit}>
-              login
+              Add Dog
             </button>
           </Form.Group>
         </Jumbotron>
@@ -85,8 +95,8 @@ export default function Dogs({ setError }) {
                 <tr>
                   <td>{d.name}</td>
                   <td>{d.DateOfBirth}</td>
-                  <td>{d.info}</td> 
-                  <td>{d.breed}</td> 
+                  <td>{d.info}</td>
+                  <td>{d.breed}</td>
                 </tr>
               );
             })}

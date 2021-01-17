@@ -21,14 +21,11 @@ public class Breed implements Processes {
     public String process(String joke, String identifier) {
 //        System.out.println(joke);
         if (identifier == null) {
-            System.out.println(joke + " : " + "dasdadasd");
             return joke;
         } 
-        System.out.println(joke);
         JsonElement ele = GSON.fromJson(joke, JsonObject.class).getAsJsonArray(identifier).get(0);
         JsonObject res = new JsonObject();
         res.add(identifier, ele);
-        System.out.println(res + " : " + identifier);
         return res.toString();
     }
 }

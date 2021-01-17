@@ -9,9 +9,14 @@ function userFacade() {
     return fetcher(URL + "count" , options, action, setError);
   };
 
+  const fetchTotalSearchesForABreed = (action, breed, setError) => {
+    const options = makeOptions("GET", true);
+    return fetcher(URL + "count/" + breed , options, action, setError);
+  };
+
   return {
     fetchTotalSearches,
-    
+    fetchTotalSearchesForABreed
   };
 }
 

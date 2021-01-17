@@ -145,7 +145,7 @@ public class UserResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("refresh")
-//    @RolesAllowed("admin")
+//    @RolesAllowed({"admin", "user"})
     public String refreshToken(@HeaderParam("x-access-token") String token, String reg) throws NotFoundException, DatabaseException, AuthenticationException {
         EntityManager em = EMF.createEntityManager();
         if (token == null) {
