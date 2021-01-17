@@ -35,7 +35,8 @@ import utils.EMF_Creator;
  */
 @Path("admin")
 public class AdminResource {
-        private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
+
+    private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static ExecutorService es = Executors.newCachedThreadPool();
     private static Gson GSON = new Gson();
     private static APIFacade api = APIFacade.getUserFacade(es);
@@ -51,7 +52,23 @@ public class AdminResource {
     @Path("/populate")
     @Produces(MediaType.APPLICATION_JSON)
     public String populateDB(@PathParam("breed") String breed) throws InterruptedException, ExecutionException, TimeoutException, IOException {
-        
+
         return searchFacade.populateBreeds();
+    }
+
+    @GET
+    @Path("/count")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getCount() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+
+        return "" + searchFacade.countSearches();
+    }
+
+    @GET
+    @Path("/count/{breed}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getCountForBreed(@PathParam("breed") String breed) throws InterruptedException, ExecutionException, TimeoutException, IOException {
+
+        return "" + searchFacade.countSearchesForBreed(breed);
     }
 }

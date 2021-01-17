@@ -45,6 +45,22 @@ public class SearchFacade {
         return instance;
     }
 
+    public Long countSearches() {
+        EntityManager em = emf.createEntityManager();
+
+        Long test = em.createQuery("SELECT COUNT(b) FROM Searches s JOIN s.breeds b", Long.class).getSingleResult();
+
+        return test;
+    }
+
+    public Long countSearchesForBreed(String breed) {
+        EntityManager em = emf.createEntityManager();
+
+        Long test = em.createQuery("SELECT COUNT(b) FROM Searches s JOIN s.breeds b WHERE b.breed = '" + breed +"'", Long.class).getSingleResult();
+
+        return test;
+    }
+
     public void addSearch(String breed) {
         EntityManager em = emf.createEntityManager();
         System.out.println(breed);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Container } from "react-bootstrap";
-import { Jokes, Signup, Login, Home, Users, Logout, Dogs } from "./components";
+import { Jokes, Signup, Login, Home, Users, Logout, Dogs, Admin } from "./components";
 import { getUserByJwt } from "./utils/token";
 import { loginMethod, logoutMethode } from "./utils/loginUtils";
 
@@ -32,6 +32,9 @@ function App() {
 
         <Route path="/dogs">
           <Dogs setError={setError}/>
+        </Route>
+        <Route path="/admin">
+          <Admin setError={setError}/>
         </Route>
 
         <Route path="/signin">

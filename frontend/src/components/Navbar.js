@@ -18,6 +18,9 @@ function NavbarShow({ user, logout }) {
           <Link to="/dogs" className="nav-link">
             Dogs
           </Link>
+          <Link to="/admin" className="nav-link">
+            Admin
+          </Link>
         </Nav>
         <Nav>
           {user.username !== "" ? (
