@@ -51,20 +51,32 @@ function Signup({ setUser, setError, error }) {
           <h2>Sign-up</h2>
           <Form.Group controlId="formBasicEmail" onChange={onChange}>
             <Form.Label>Name</Form.Label>
-            <Form.Control id="username" type="name" placeholder="Enter name" />
+            <Form.Control
+              minLength="2"
+              maxLength="25"
+              id="username"
+              type="name"
+              placeholder="Enter name"
+            />
             <Form.Label>Password</Form.Label>
             <Form.Control
+              minLength="4"
               id="password1"
               type="Password"
               placeholder="Enter Password"
             />
             <Form.Label>Repeat Password</Form.Label>
             <Form.Control
+              minLength="4"
               id="password2"
               type="Password"
               placeholder="Enter Password"
             />
-            <button type="" className="btn btn-primary m-2" onClick={performLogin}>
+            <button
+              type=""
+              className="btn btn-primary m-2"
+              onClick={performLogin}
+            >
               Sign UP
             </button>
           </Form.Group>

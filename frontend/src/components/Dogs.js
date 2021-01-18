@@ -20,7 +20,10 @@ export default function Dogs({ setError, error }) {
 
   useEffect(() => {
     getUsersDogs();
-    breedFacade.fetchAllBreeds((data) => setBreeds([...data.dogs]), setError);
+    breedFacade.fetchAllBreeds((data) => {
+      setBreeds([...data.dogs]);
+      setError("");
+    }, setError);
   }, []);
 
   const onChange = (evt) => {
@@ -37,7 +40,16 @@ export default function Dogs({ setError, error }) {
   };
 
   const submitUpdate = () => {
-    facade.fetchUpdateDog((data) => {setEdit(false);}, dog, setError);
+    facade.fetchUpdateDog(
+      (data) => {
+        setEdit(false);
+        setError("");
+        getUsersDogs();
+        setDog({...init})
+      },
+      dog,
+      setError
+    );
   };
 
   const click = (d) => {
@@ -57,18 +69,21 @@ export default function Dogs({ setError, error }) {
       facade.fetchAddDog(
         (data) => {
           getUsersDogs();
+          setDog({...init})
         },
         tempDog,
         setError
       );
     }
+  };
 
-    //
+  const onClickDelete = (id) => {
+    facade.fetchDeleteDog((data) => {getUsersDogs()}, id, setError);
   };
 
   return (
     <Row>
-      <Col xs="8">
+      <Col xs="7">
         <Jumbotron className="text-center w-100">
           <Form.Group
             controlId="formBasicEmail"
@@ -79,6 +94,8 @@ export default function Dogs({ setError, error }) {
           >
             <Form.Label className="float-left">Name</Form.Label>
             <Form.Control
+              minLength="2"
+              maxLength="50"
               id="name"
               type="name"
               value={dog.name}
@@ -86,7 +103,7 @@ export default function Dogs({ setError, error }) {
             />
 
             <Form.Label className="float-left">Birthday</Form.Label>
-            <Form.Control id="DateOfBirth" type="date" />
+            <Form.Control id="DateOfBirth" value={dog.DateOfBirth} type="date" />
 
             <div className="mt-4">
               <SelectSearch
@@ -113,7 +130,7 @@ export default function Dogs({ setError, error }) {
           <p>{error}</p>
         </Jumbotron>
       </Col>
-      <Col xs="4">
+      <Col xs="5">
         <Table>
           <thead>
             <tr>
@@ -121,16 +138,29 @@ export default function Dogs({ setError, error }) {
               <th>Birthday</th>
               <th>Info</th>
               <th>Breed</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {dogs.map((d) => {
               return (
-                <tr onClick={() => click(d)}>
-                  <td>{d.name}</td>
-                  <td>{d.DateOfBirth}</td>
-                  <td>{d.info}</td>
-                  <td>{d.breed}</td>
+                <tr>
+                  <td onClick={() => click(d)}>{d.name}</td>
+                  <td onClick={() => click(d)}>{d.DateOfBirth}</td>
+                  <td onClick={() => click(d)}>
+                    {d.info.length > 25
+                      ? d.info.substring(0, 25) + " . . ."
+                      : d.info}
+                  </td >
+                  <td onClick={() => click(d)}>{d.breed}</td>
+                  <td>
+                    <button
+                      className="btn btn-transparent"
+                      onClick={() => onClickDelete(d.id)}
+                    >
+                      delete
+                    </button>
+                  </td>
                 </tr>
               );
             })}

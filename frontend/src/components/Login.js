@@ -26,12 +26,15 @@ function LoginDisplay({ login, user, logout, error }) {
               <Form.Group controlId="formBasicEmail" onChange={onChange} onKeyPress={(evt) => {if(evt.charCode === 13)performLogin(evt)}}>
                 <Form.Label>Name</Form.Label>
                 <Form.Control
+                  minLength="2"
+                  maxLength="25"
                   id="username"
                   type="name"
                   placeholder="Enter name"
                 />
                 <Form.Label>Password</Form.Label>
                 <Form.Control
+                  minLength="4"
                   id="password"
                   type="Password"
                   placeholder="Enter Password"

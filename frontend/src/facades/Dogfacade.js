@@ -19,10 +19,16 @@ function userFacade() {
     return fetcher(URL , options, action, setError);
   };
 
+  const fetchDeleteDog = (action, id, setError) => {
+    const options = makeOptions("DELETE", true);
+    return fetcher(URL + id, options, action, setError);
+  };
+
   return {
     fetchAddDog,
     fetchAllOfAUSersDog,
     fetchUpdateDog,
+    fetchDeleteDog,
   };
 }
 

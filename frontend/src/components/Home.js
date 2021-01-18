@@ -39,7 +39,7 @@ export default function Home({ setError, error }) {
             <ListGroup.Item action className="mb-2">
               {breed.facts}
             </ListGroup.Item>
-            <ListGroup.Item action className="mb-2" href={breed.wikipedia}>
+            <ListGroup.Item action className="mb-2" href={breed.wikipedia} target="_blank">
               {breed.wikipedia || "Kunne ikke finde et link :("}
             </ListGroup.Item>
           </ListGroup>
